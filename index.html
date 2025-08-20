@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>CH Tulasi Ram - Software Developer</title>
     
     <!-- SEO Meta Tags -->
@@ -23,8 +23,12 @@
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
-            cursor: none; 
             overflow-x: hidden;
+        }
+        
+        /* Show cursor by default for mobile, hide for desktop */
+        @media (hover: hover) and (pointer: fine) {
+            body { cursor: none; }
         }
 
         /* Fix for contact links clickability */
@@ -61,9 +65,33 @@
             transform: translate3d(0, 0, 0);
         }
         
-        /* Remove default scroll behavior */
-        html {
-            scroll-behavior: auto;
+        /* Smooth scrolling improvements for mobile */
+        @media (max-width: 768px) {
+            .smooth-scroll-container {
+                /* Use native scrolling on mobile for better performance */
+                position: relative;
+                height: auto;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .smooth-scroll-content {
+                transform: none;
+            }
+        }
+        
+        /* Remove default scroll behavior on desktop */
+        @media (min-width: 769px) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+        
+        /* Smooth scroll behavior for mobile */
+        @media (max-width: 768px) {
+            html {
+                scroll-behavior: smooth;
+            }
         }
         
         /* Custom scrollbar for webkit browsers */
@@ -94,9 +122,36 @@
         @keyframes sparkle-animation { 0% { transform: scale(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } }
         .sparkle-text::after { content: '✦'; position: absolute; font-size: 0.7em; opacity: 0; animation: sparkle-animation 2s ease-in-out infinite; top: 10%; right: 5%; animation-delay: 0.3s; }
         .sparkle-text::before { content: '✧'; position: absolute; font-size: 0.5em; opacity: 0; animation: sparkle-animation 2.5s ease-in-out infinite; top: 70%; left: 10%; animation-delay: 0.8s; }
-        .cursor-dot, .cursor-outline { pointer-events: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; z-index: 9999; }
-        .cursor-dot { width: 8px; height: 8px; background-color: #f472b6; }
-        .cursor-outline { width: 40px; height: 40px; border: 2px solid #f472b6; transition: transform 0.2s ease-out, width 0.3s ease-out, height 0.3s ease-out; }
+        /* Custom cursor styles - only for desktop devices */
+        @media (hover: hover) and (pointer: fine) {
+            .cursor-dot, .cursor-outline { 
+                pointer-events: none; 
+                position: fixed; 
+                top: 50%; 
+                left: 50%; 
+                transform: translate(-50%, -50%); 
+                border-radius: 50%; 
+                z-index: 9999; 
+            }
+            .cursor-dot { 
+                width: 8px; 
+                height: 8px; 
+                background-color: #f472b6; 
+            }
+            .cursor-outline { 
+                width: 40px; 
+                height: 40px; 
+                border: 2px solid #f472b6; 
+                transition: transform 0.2s ease-out, width 0.3s ease-out, height 0.3s ease-out; 
+            }
+        }
+        
+        /* Hide cursor elements on mobile/touch devices */
+        @media (hover: none) or (pointer: coarse) {
+            .cursor-dot, .cursor-outline { 
+                display: none !important; 
+            }
+        }
         #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .timeline-item { position: relative; padding-left: 3rem; padding-bottom: 2rem; }
         .timeline-item:last-child { padding-bottom: 0; }
@@ -131,6 +186,7 @@
             background: linear-gradient(90deg, #a78bfa, #f472b6) border-box;
             -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: destination-out;
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
             mask-composite: exclude;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -174,6 +230,103 @@
         }
         .nav-link-color:hover {
             filter: brightness(1.2);
+        }
+        
+        /* Mobile Navigation Styles */
+        .mobile-nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 60;
+        }
+        
+        .mobile-nav-toggle span {
+            width: 25px;
+            height: 3px;
+            background: linear-gradient(90deg, #a78bfa, #f472b6);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        
+        .mobile-nav-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+        
+        .mobile-nav-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-nav-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+        
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .mobile-nav.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-nav a {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            text-align: center;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav.active a {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .mobile-nav.active a:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-nav.active a:nth-child(2) { transition-delay: 0.2s; }
+        .mobile-nav.active a:nth-child(3) { transition-delay: 0.3s; }
+        .mobile-nav.active a:nth-child(4) { transition-delay: 0.4s; }
+        .mobile-nav.active a:nth-child(5) { transition-delay: 0.5s; }
+        .mobile-nav.active a:nth-child(6) { transition-delay: 0.6s; }
+        .mobile-nav.active a:nth-child(7) { transition-delay: 0.7s; }
+        
+        @media (max-width: 768px) {
+            .desktop-nav {
+                display: none;
+            }
+            
+            .mobile-nav-toggle {
+                display: flex;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-nav-toggle {
+                display: none;
+            }
+            
+            .mobile-nav {
+                display: none;
+            }
         }
         
         /* Smooth scroll progress indicator */
@@ -304,12 +457,66 @@
         .spin {
             animation: spin 1s linear infinite;
         }
+        
+        /* Mobile Touch Optimizations */
+        @media (max-width: 768px) {
+            /* Larger touch targets for mobile */
+            .mobile-nav a, .contact-icon, button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Prevent zoom on input focus */
+            input[type="text"],
+            input[type="email"],
+            textarea {
+                font-size: 16px;
+            }
+            
+            /* Improve touch scrolling */
+            body {
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-y: contain;
+            }
+            
+            /* Better spacing for mobile */
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            /* Optimize hero text for mobile */
+            .hero-title {
+                font-size: 2.5rem !important;
+                line-height: 1.2;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem !important;
+                margin-top: 1rem;
+            }
+        }
+        
+        /* Desktop-specific optimizations */
+        @media (min-width: 769px) {
+            /* Enhanced hover effects for desktop */
+            .glass-card:hover {
+                transform: translateY(-10px) scale(1.02);
+            }
+            
+            /* Better cursor interactions */
+            .tech-logo:hover, .contact-icon:hover {
+                transform: scale(1.15);
+                transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+        }
     </style>
 </head>
 <body class="bg-black text-gray-200 antialiased transition-colors duration-500">
 
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
+    <!-- Custom cursor elements - only for desktop -->
+    <div class="cursor-dot" style="display: none;"></div>
+    <div class="cursor-outline" style="display: none;"></div>
     <div class="scroll-progress"></div>
     
     <!-- Success Popup -->
@@ -338,7 +545,7 @@
                         Chaladi Tulasi Ram
                     </a>
                     <div class="flex items-center space-x-8">
-                        <nav class="hidden md:flex space-x-8">
+                        <nav class="desktop-nav hidden md:flex space-x-8">
                             <a href="#about" class="bounce-on-hover nav-link-color smooth-link">About</a>
                             <a href="#activities" class="bounce-on-hover nav-link-color smooth-link">Activities</a>
                             <a href="#hobbies" class="bounce-on-hover nav-link-color smooth-link">Hobbies</a>
@@ -347,7 +554,25 @@
                             <a href="#certifications" class="bounce-on-hover nav-link-color smooth-link">Certifications</a>
                             <a href="#contact-form" class="bounce-on-hover nav-link-color smooth-link">Contact</a>
                         </nav>
+                        
+                        <!-- Mobile Navigation Toggle -->
+                        <div class="mobile-nav-toggle md:hidden" id="mobileToggle">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
                     </div>
+                </div>
+                
+                <!-- Mobile Navigation Menu -->
+                <div class="mobile-nav" id="mobileNav">
+                    <a href="#about" class="nav-link-color smooth-link mobile-nav-link">About</a>
+                    <a href="#activities" class="nav-link-color smooth-link mobile-nav-link">Activities</a>
+                    <a href="#hobbies" class="nav-link-color smooth-link mobile-nav-link">Hobbies</a>
+                    <a href="#projects" class="nav-link-color smooth-link mobile-nav-link">Projects</a>
+                    <a href="#skills" class="nav-link-color smooth-link mobile-nav-link">Skills</a>
+                    <a href="#certifications" class="nav-link-color smooth-link mobile-nav-link">Certifications</a>
+                    <a href="#contact-form" class="nav-link-color smooth-link mobile-nav-link">Contact</a>
                 </div>
             </header>
 
@@ -751,153 +976,223 @@
         document.getElementById('successOverlay').addEventListener('click', closeSuccessPopup);
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Smooth Scrolling System
-            let currentScrollY = 0;
-            let targetScrollY = 0;
-            let scrollVelocity = 0;
-            let isScrolling = false;
+            const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            const smoothContainer = document.querySelector('.smooth-scroll-container');
-            const smoothContent = document.querySelector('.smooth-scroll-content');
-            const scrollProgress = document.querySelector('.scroll-progress');
+            // Mobile Navigation
+            const mobileToggle = document.getElementById('mobileToggle');
+            const mobileNav = document.getElementById('mobileNav');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
             
-            // Get total scrollable height
-            function getScrollHeight() {
-                return smoothContent.offsetHeight - window.innerHeight;
-            }
+            // Toggle mobile navigation
+            mobileToggle.addEventListener('click', () => {
+                mobileToggle.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+                document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+            });
             
-            // Smooth scroll animation using requestAnimationFrame
-            function smoothScrollAnimation() {
-                if (Math.abs(targetScrollY - currentScrollY) > 0.1) {
-                    const diff = targetScrollY - currentScrollY;
-                    scrollVelocity += diff * 0.1;
-                    scrollVelocity *= 0.8;
-                    currentScrollY += scrollVelocity;
-                    
-                    // Apply transform with hardware acceleration
-                    smoothContent.style.transform = `translate3d(0, ${-currentScrollY}px, 0)`;
-                    
-                    // Update scroll progress
-                    const scrollHeight = getScrollHeight();
-                    const progress = Math.min((currentScrollY / scrollHeight) * 100, 100);
-                    scrollProgress.style.width = `${progress}%`;
-                    
-                    isScrolling = true;
-                    requestAnimationFrame(smoothScrollAnimation);
-                } else {
-                    isScrolling = false;
-                }
-            }
-            
-            // Handle wheel events for smooth scrolling
-            let wheelTimeout;
-            window.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                
-                const scrollHeight = getScrollHeight();
-                const delta = e.deltaY * 2.5; // Adjust scroll sensitivity
-                targetScrollY += delta;
-                targetScrollY = Math.max(0, Math.min(targetScrollY, scrollHeight));
-                
-                if (!isScrolling) {
-                    smoothScrollAnimation();
-                }
-                
-                // Clear timeout and set new one for scroll end detection
-                clearTimeout(wheelTimeout);
-                wheelTimeout = setTimeout(() => {
-                    isScrolling = false;
-                }, 150);
-            }, { passive: false });
-            
-            // Handle touch events for mobile smooth scrolling
-            let touchStartY = 0;
-            let lastTouchY = 0;
-            
-            window.addEventListener('touchstart', (e) => {
-                touchStartY = e.touches[0].clientY;
-                lastTouchY = touchStartY;
-            }, { passive: true });
-            
-            window.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                const currentTouchY = e.touches[0].clientY;
-                const delta = (lastTouchY - currentTouchY) * 3;
-                
-                const scrollHeight = getScrollHeight();
-                targetScrollY += delta;
-                targetScrollY = Math.max(0, Math.min(targetScrollY, scrollHeight));
-                
-                lastTouchY = currentTouchY;
-                
-                if (!isScrolling) {
-                    smoothScrollAnimation();
-                }
-            }, { passive: false });
-            
-            // Smooth scroll to section function
-            function scrollToSection(targetElement) {
-                const elementTop = targetElement.offsetTop - 100; // Account for header
-                targetScrollY = Math.max(0, Math.min(elementTop, getScrollHeight()));
-                
-                if (!isScrolling) {
-                    smoothScrollAnimation();
-                }
-            }
-            
-            // Handle navigation clicks
-            document.querySelectorAll('.smooth-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute('href').substring(1);
-                    const targetElement = document.getElementById(targetId);
-                    
-                    if (targetElement) {
-                        scrollToSection(targetElement);
-                    }
+            // Close mobile nav when clicking on a link
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileToggle.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                    document.body.style.overflow = '';
                 });
             });
             
-            // Back to top functionality
-            const backToTopButton = document.getElementById('back-to-top');
-            backToTopButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                targetScrollY = 0;
-                if (!isScrolling) {
-                    smoothScrollAnimation();
+            // Close mobile nav when clicking outside
+            mobileNav.addEventListener('click', (e) => {
+                if (e.target === mobileNav) {
+                    mobileToggle.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                    document.body.style.overflow = '';
                 }
             });
             
-            // Show/hide back to top button and update header
-            function updateScrollElements() {
-                const header = document.getElementById('header');
+            // Smooth Scrolling System - Different implementation for mobile vs desktop
+            if (!isMobile) {
+                // Desktop smooth scrolling
+                let currentScrollY = 0;
+                let targetScrollY = 0;
+                let scrollVelocity = 0;
+                let isScrolling = false;
                 
-                if (currentScrollY > 300) {
-                    backToTopButton.classList.add('visible');
-                } else {
-                    backToTopButton.classList.remove('visible');
+                const smoothContainer = document.querySelector('.smooth-scroll-container');
+                const smoothContent = document.querySelector('.smooth-scroll-content');
+                const scrollProgress = document.querySelector('.scroll-progress');
+                
+                // Get total scrollable height
+                function getScrollHeight() {
+                    return smoothContent.offsetHeight - window.innerHeight;
                 }
                 
-                if (currentScrollY > 10) {
-                    header.classList.add('bg-black/80', 'backdrop-blur-sm', 'shadow-sm');
-                } else {
-                    header.classList.remove('bg-black/80', 'backdrop-blur-sm', 'shadow-sm');
+                // Smooth scroll animation using requestAnimationFrame
+                function smoothScrollAnimation() {
+                    if (Math.abs(targetScrollY - currentScrollY) > 0.1) {
+                        const diff = targetScrollY - currentScrollY;
+                        scrollVelocity += diff * 0.12; // Slightly faster response
+                        scrollVelocity *= 0.82; // Better damping
+                        currentScrollY += scrollVelocity;
+                        
+                        // Apply transform with hardware acceleration
+                        smoothContent.style.transform = `translate3d(0, ${-currentScrollY}px, 0)`;
+                        
+                        // Update scroll progress
+                        const scrollHeight = getScrollHeight();
+                        const progress = Math.min((currentScrollY / scrollHeight) * 100, 100);
+                        scrollProgress.style.width = `${progress}%`;
+                        
+                        isScrolling = true;
+                        requestAnimationFrame(smoothScrollAnimation);
+                    } else {
+                        isScrolling = false;
+                    }
                 }
+                
+                // Handle wheel events for smooth scrolling
+                let wheelTimeout;
+                window.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    
+                    const scrollHeight = getScrollHeight();
+                    const delta = e.deltaY * 2; // Reduced sensitivity for better control
+                    targetScrollY += delta;
+                    targetScrollY = Math.max(0, Math.min(targetScrollY, scrollHeight));
+                    
+                    if (!isScrolling) {
+                        smoothScrollAnimation();
+                    }
+                    
+                    // Clear timeout and set new one for scroll end detection
+                    clearTimeout(wheelTimeout);
+                    wheelTimeout = setTimeout(() => {
+                        isScrolling = false;
+                    }, 100);
+                }, { passive: false });
+                
+                // Smooth scroll to section function for desktop
+                function scrollToSection(targetElement) {
+                    const elementTop = targetElement.offsetTop - 100; // Account for header
+                    targetScrollY = Math.max(0, Math.min(elementTop, getScrollHeight()));
+                    
+                    if (!isScrolling) {
+                        smoothScrollAnimation();
+                    }
+                }
+                
+                // Handle navigation clicks for desktop
+                document.querySelectorAll('.smooth-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetId = link.getAttribute('href').substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            scrollToSection(targetElement);
+                        }
+                    });
+                });
+                
+                // Back to top functionality for desktop
+                const backToTopButton = document.getElementById('back-to-top');
+                backToTopButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    targetScrollY = 0;
+                    if (!isScrolling) {
+                        smoothScrollAnimation();
+                    }
+                });
+                
+                // Show/hide back to top button and update header for desktop
+                function updateScrollElements() {
+                    const header = document.getElementById('header');
+                    
+                    if (currentScrollY > 300) {
+                        backToTopButton.classList.add('visible');
+                    } else {
+                        backToTopButton.classList.remove('visible');
+                    }
+                    
+                    if (currentScrollY > 10) {
+                        header.classList.add('bg-black/80', 'backdrop-blur-sm', 'shadow-sm');
+                    } else {
+                        header.classList.remove('bg-black/80', 'backdrop-blur-sm', 'shadow-sm');
+                    }
+                }
+                
+                // Monitor scroll position for UI updates
+                function monitorScroll() {
+                    updateScrollElements();
+                    requestAnimationFrame(monitorScroll);
+                }
+                monitorScroll();
+                
+                // Handle window resize for desktop
+                window.addEventListener('resize', () => {
+                    const scrollHeight = getScrollHeight();
+                    targetScrollY = Math.min(targetScrollY, scrollHeight);
+                    currentScrollY = Math.min(currentScrollY, scrollHeight);
+                });
+                
+            } else {
+                // Mobile smooth scrolling - use native scrolling with enhancements
+                const scrollProgress = document.querySelector('.scroll-progress');
+                
+                // Update progress bar on mobile
+                function updateMobileScrollProgress() {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const progress = Math.min((scrollTop / scrollHeight) * 100, 100);
+                    scrollProgress.style.width = `${progress}%`;
+                }
+                
+                // Handle scroll events on mobile
+                window.addEventListener('scroll', updateMobileScrollProgress, { passive: true });
+                
+                // Mobile navigation smooth scrolling
+                document.querySelectorAll('.smooth-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetId = link.getAttribute('href').substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            const offsetTop = targetElement.offsetTop - 80; // Account for header
+                            window.scrollTo({
+                                top: offsetTop,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+                
+                // Back to top for mobile
+                const backToTopButton = document.getElementById('back-to-top');
+                backToTopButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                // Show/hide back to top and update header on mobile
+                window.addEventListener('scroll', () => {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const header = document.getElementById('header');
+                    
+                    if (scrollTop > 300) {
+                        backToTopButton.classList.add('visible');
+                    } else {
+                        backToTopButton.classList.remove('visible');
+                    }
+                    
+                    if (scrollTop > 10) {
+                        header.classList.add('bg-black/80', 'backdrop-blur-sm', 'shadow-sm');
+                    } else {
+                        header.classList.remove('bg-black/80', 'backdrop-blur-sm', 'shadow-sm');
+                    }
+                }, { passive: true });
             }
-            
-            // Monitor scroll position for UI updates
-            function monitorScroll() {
-                updateScrollElements();
-                requestAnimationFrame(monitorScroll);
-            }
-            monitorScroll();
-            
-            // Handle window resize
-            window.addEventListener('resize', () => {
-                const scrollHeight = getScrollHeight();
-                targetScrollY = Math.min(targetScrollY, scrollHeight);
-                currentScrollY = Math.min(currentScrollY, scrollHeight);
-            });
             
             // Initialize other features
             const bounceElements = document.querySelectorAll('.bounce-on-hover');
@@ -924,41 +1219,54 @@
             }, { threshold: 0.1 });
             sections.forEach(section => observer.observe(section));
 
-            // Custom cursor - disable for clickable elements
-            const cursorDot = document.querySelector('.cursor-dot');
-            const cursorOutline = document.querySelector('.cursor-outline');
-            
-            window.addEventListener('mousemove', e => {
-                const posX = e.clientX; 
-                const posY = e.clientY;
+            // Custom cursor - only for desktop devices
+            if (!isMobile && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                const cursorDot = document.querySelector('.cursor-dot');
+                const cursorOutline = document.querySelector('.cursor-outline');
                 
-                // Check if hovering over clickable elements
-                const clickableElement = document.elementFromPoint(posX, posY);
-                const isClickable = clickableElement && (
-                    clickableElement.tagName === 'A' || 
-                    clickableElement.tagName === 'BUTTON' ||
-                    clickableElement.closest('a') ||
-                    clickableElement.closest('button') ||
-                    clickableElement.classList.contains('contact-icon')
-                );
-                
-                if (isClickable) {
-                    cursorDot.style.display = 'none';
-                    cursorOutline.style.display = 'none';
-                    document.body.style.cursor = 'pointer';
-                } else {
+                if (cursorDot && cursorOutline) {
+                    // Show cursor elements on desktop
                     cursorDot.style.display = 'block';
                     cursorOutline.style.display = 'block';
-                    document.body.style.cursor = 'none';
+                    
+                    window.addEventListener('mousemove', e => {
+                        const posX = e.clientX; 
+                        const posY = e.clientY;
+                        
+                        // Check if hovering over clickable elements
+                        const clickableElement = document.elementFromPoint(posX, posY);
+                        const isClickable = clickableElement && (
+                            clickableElement.tagName === 'A' || 
+                            clickableElement.tagName === 'BUTTON' ||
+                            clickableElement.closest('a') ||
+                            clickableElement.closest('button') ||
+                            clickableElement.classList.contains('contact-icon')
+                        );
+                        
+                        if (isClickable) {
+                            cursorDot.style.display = 'none';
+                            cursorOutline.style.display = 'none';
+                            document.body.style.cursor = 'pointer';
+                        } else {
+                            cursorDot.style.display = 'block';
+                            cursorOutline.style.display = 'block';
+                            document.body.style.cursor = 'none';
+                        }
+                        
+                        cursorDot.style.left = `${posX}px`; 
+                        cursorDot.style.top = `${posY}px`;
+                        cursorOutline.animate({ 
+                            left: `${posX}px`, 
+                            top: `${posY}px` 
+                        }, { duration: 500, fill: 'forwards' });
+                    });
                 }
-                
-                cursorDot.style.left = `${posX}px`; 
-                cursorDot.style.top = `${posY}px`;
-                cursorOutline.animate({ 
-                    left: `${posX}px`, 
-                    top: `${posY}px` 
-                }, { duration: 500, fill: 'forwards' });
-            });
+            } else {
+                // Remove cursor elements on mobile and ensure normal cursor
+                const cursorElements = document.querySelectorAll('.cursor-dot, .cursor-outline');
+                cursorElements.forEach(el => el.style.display = 'none');
+                document.body.style.cursor = 'auto';
+            }
 
             // Hero canvas animation
             const canvas = document.getElementById('hero-canvas');
@@ -991,20 +1299,37 @@
             resize(); 
             draw();
 
-            // Card tilt effects
-            const tiltCards = document.querySelectorAll('.glass-card');
-            tiltCards.forEach(card => {
-                card.addEventListener('mousemove', e => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left - rect.width / 2; 
-                    const y = e.clientY - rect.top - rect.height / 2;
-                    const rotateX = -y / 20; 
-                    const rotateY = x / 20;
-                    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            // Card tilt effects - only on desktop
+            if (!isMobile) {
+                const tiltCards = document.querySelectorAll('.glass-card');
+                tiltCards.forEach(card => {
+                    card.addEventListener('mousemove', e => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left - rect.width / 2; 
+                        const y = e.clientY - rect.top - rect.height / 2;
+                        const rotateX = -y / 20; 
+                        const rotateY = x / 20;
+                        card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                    });
+                    card.addEventListener('mouseleave', () => { 
+                        card.style.transform = 'rotateX(0) rotateY(0) scale(1)'; 
+                    });
                 });
-                card.addEventListener('mouseleave', () => { 
-                    card.style.transform = 'rotateX(0) rotateY(0) scale(1)'; 
-                });
+            }
+            
+            // Handle window resize to switch between mobile/desktop modes
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    const wasMobile = isMobile;
+                    const isNowMobile = window.innerWidth <= 768;
+                    
+                    if (wasMobile !== isNowMobile) {
+                        // Reload the page to reinitialize with correct mode
+                        window.location.reload();
+                    }
+                }, 250);
             });
         });
     </script>
